@@ -225,7 +225,7 @@ The main process cancels the worker context, shuts down the HTTP server with a t
 
 ### 1. Make Retry Processing More Robust
 
-Today the worker peeks the earliest retry item, waits for polling intervals, and then removes the entry before processing. With more time, I would improve this by:
+Currently the worker peeks the earliest retry item, waits for polling intervals, and then removes the entry before processing. With more time, I would improve this by:
 
 - using a blocking or more event-driven retry pattern
 - separating transient processing failures from rate-limit retries more cleanly
@@ -257,23 +257,6 @@ The service logs useful events, but I would add:
 ### 5. Tighten The API Contract
 
 The request payload is currently stored as `map[string]interface{}`. That is flexible, but it weakens validation. If this were moving toward production, I would either define a stricter schema or make payload validation pluggable.
-
-### 6. Revisit Data Lifecycle
-
-Stats currently accumulate without an expiration policy. Depending on product needs, I would decide whether stats should:
-
-- persist forever
-- roll up by day or hour
-- expire after a retention window
-
-### 7. Package The App For Easier Onboarding
-
-I would likely add:
-
-- a `Makefile` or task runner
-- a `.env.example`
-- a Dockerfile for the API itself
-- one-command local startup for Redis and the app together
 
 ## Notes
 
