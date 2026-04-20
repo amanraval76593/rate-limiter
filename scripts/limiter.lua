@@ -9,9 +9,10 @@ redis.call('ZREMRANGEBYSCORE', key, 0, now - window)
 local count = redis.call('ZCARD', key)
 
 if count >= limit then
-    local oldest = redis.call('ZRANGE', key, 0, 0)
-    if oldest and oldest[1] then
-        return {0, tonumber(oldest[1]) + window - now}
+    local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+    if oldest and oldest[2] then
+        local oldest_score = tonumber(oldest[2])
+        return {0, math.max(0, oldest_score + window - now)}
     end
     return {0, window}
 else
